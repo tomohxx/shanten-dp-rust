@@ -1,15 +1,50 @@
 use crate::common::{MAX_SHT, NUM_TIDS, chmin};
 
+/// Errors returned by [`calc_shanten`].
 #[derive(Debug, thiserror::Error)]
 pub enum ShantenError {
+    /// The hand contains an invalid tile count.
     #[error("Invalid number of hand's tiles at {0}: {1}")]
     InvalidHand(usize, i8),
+    /// The tile availability constraints contain an invalid tile count.
     #[error("Invalid number of tile_limits' at {0}: {1}")]
     InvalidTileLimits(usize, i8),
+    /// The number of melds is outside the supported range.
     #[error("Invalid sum of hands's melds: {0}")]
     InvalidMelds(usize),
 }
 
+/// Calculates the shanten number for a hand.
+///
+/// # Arguments
+///
+/// * `hand` - Tile counts for the hand.
+/// * `tile_limits` - Per-tile availability constraints.
+/// * `m` - Number of hand tiles divided by 3.
+/// * `check_hand` - Validates the arguments when set to `true`.
+///
+/// # Errors
+///
+/// Returns [`Err`] if any argument is invalid.
+///
+/// # Examples
+///
+/// ```
+/// # use shanten_dp::{ShantenError, calc_shanten, make_tile_limits};
+/// # fn main() -> Result<(), ShantenError> {
+/// let hand: [i8; 34] = [
+///    1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
+///    0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
+///    0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
+///    1, 0, 1, 0, 3, 0, 0, // jihai
+/// ];
+/// let tile_limits = make_tile_limits(false);
+/// let shanten = calc_shanten(&hand, &tile_limits, 4, true)?;
+///
+/// assert!(matches!(shanten, Some(2)));
+/// # Ok(())
+/// # }
+/// ```
 pub fn calc_shanten(
     hand: &[i8; 34],
     tile_limits: &[i8; 35],
@@ -42,6 +77,13 @@ pub fn calc_shanten(
     Ok(if ret == MAX_SHT { None } else { Some(ret) })
 }
 
+/// Creates tile availability constraints.
+///
+/// # Arguments
+///
+/// * `three_player` - If `false`, sets the available counts for all tiles to `4`.
+///   If `true`, sets the available counts for *2m* through *8m* to `0` and all other
+///   tiles to `4`.
 pub fn make_tile_limits(three_player: bool) -> [i8; 35] {
     let mut tile_limits = [4i8; 35];
 
