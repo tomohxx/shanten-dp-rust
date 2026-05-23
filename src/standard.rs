@@ -1,4 +1,4 @@
-use crate::common::{MAX_SHT, NUM_TIDS, chmin, get_next_value};
+use crate::common::*;
 
 struct Delta {
     a: usize,
@@ -65,7 +65,7 @@ const DELTAS: [&[Delta]; 34] = [
 pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35], m: usize) -> i8 {
     let mut table = [[[[[MAX_SHT; 5]; 2]; 5]; 5]; 35];
 
-    table[0][0][0][0][0] = -1;
+    table[0][0][0][0][0] = 0;
 
     for n in 0..NUM_TIDS {
         for delta in DELTAS[n] {
@@ -79,11 +79,11 @@ pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35], m: usize) -> i8 {
                                 continue;
                             }
 
-                            let distance = (a + delta.a) as i8 - hand[n];
+                            let distance = (a + delta.a).saturating_sub(hand[n] as usize) as u8;
 
                             chmin(
                                 &mut table[n + 1][b + delta.b][delta.c][h + delta.h][mm + delta.m],
-                                get_next_value(current, distance),
+                                current + distance,
                             );
                         }
                     }
@@ -92,5 +92,5 @@ pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35], m: usize) -> i8 {
         }
     }
 
-    table[NUM_TIDS][0][0][1][m]
+    table[NUM_TIDS][0][0][1][m] as i8 - 1
 }

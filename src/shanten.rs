@@ -1,4 +1,4 @@
-use crate::common::{MAX_SHT, NUM_TIDS, chmin};
+use crate::common::{MAX_SHT, NUM_TIDS};
 
 /// Errors returned by [`calc_shanten`].
 #[derive(Debug, thiserror::Error)]
@@ -70,11 +70,11 @@ pub fn calc_shanten(
     let mut ret = super::standard::calc_shanten(hand, tile_limits, m);
 
     if m == 4 {
-        chmin(&mut ret, super::seven_pairs::calc_shanten(hand, tile_limits));
-        chmin(&mut ret, super::thirteen_orphans::calc_shanten(hand, tile_limits));
+        ret = ret.min(super::seven_pairs::calc_shanten(hand, tile_limits));
+        ret = ret.min(super::thirteen_orphans::calc_shanten(hand, tile_limits));
     }
 
-    Ok(if ret == MAX_SHT { None } else { Some(ret) })
+    Ok(if ret == MAX_SHT as i8 - 1 { None } else { Some(ret) })
 }
 
 /// Creates tile availability constraints.
