@@ -43,3 +43,7 @@ fn main() {
 1. Run `cargo bench`.
 
 [^1]: Available from <https://mahjong.ara.black/etc/shanten/shanten9.htm>.
+
+## License
+
+MIT License.
