@@ -68,22 +68,14 @@ pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35], m: usize) -> i8 {
     table[0][0][0][0][0] = -1;
 
     for n in 0..NUM_TIDS {
-        for a in 0..=(tile_limits[n] as usize) {
-            for b in 0..=(tile_limits[n + 1] as usize) {
-                for h in 0..=1usize {
-                    for mm in 0..=m {
-                        let current = table[n][a][b][h][mm];
+        for delta in DELTAS[n] {
+            for a in 0..(tile_limits[n] as usize + 1).saturating_sub(delta.a) {
+                for b in 0..(tile_limits[n + 1] as usize + 1).saturating_sub(delta.b).min(a + 1) {
+                    for h in 0..2usize.saturating_sub(delta.h) {
+                        for mm in 0..(m + 1).saturating_sub(delta.m) {
+                            let current = table[n][a][b][h][mm];
 
-                        if current == MAX_SHT {
-                            continue;
-                        }
-
-                        for delta in DELTAS[n] {
-                            if (a + delta.a) as i8 > tile_limits[n]
-                                || (b + delta.b) as i8 > tile_limits[n + 1]
-                                || h + delta.h > 1
-                                || mm + delta.m > 4
-                            {
+                            if current == MAX_SHT {
                                 continue;
                             }
 

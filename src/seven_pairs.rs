@@ -6,16 +6,12 @@ pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35]) -> i8 {
     table[0][0] = -1;
 
     for n in 0..NUM_TIDS {
-        for p in 0..=7 {
-            let current = table[n][p];
+        for pp in 0..(tile_limits[n] / 2 + 1).min(2) as usize {
+            for p in 0..8usize.saturating_sub(pp) {
+                let current = table[n][p];
 
-            if current == MAX_SHT {
-                continue;
-            }
-
-            for pp in 0..=1usize {
-                if 2 * pp as i8 > tile_limits[n] || p + pp > 7 {
-                    break;
+                if current == MAX_SHT {
+                    continue;
                 }
 
                 let distance = 2 * pp as i8 - hand[n];

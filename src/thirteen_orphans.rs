@@ -7,20 +7,16 @@ pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35]) -> i8 {
 
     table[0][0] = -1;
 
-    for n in 0..13 {
-        for p in 0..=1 {
-            let current = table[n][p];
+    for (n, tid) in NON_SIMPLES.iter().enumerate() {
+        for pp in 0..(tile_limits[*tid]).min(2) as usize {
+            for p in 0..2usize.saturating_sub(pp) {
+                let current = table[n][p];
 
-            if current == MAX_SHT {
-                continue;
-            }
-
-            for pp in 0..=1usize {
-                if pp as i8 + 1 > tile_limits[NON_SIMPLES[n]] || p + pp > 1 {
-                    break;
+                if current == MAX_SHT {
+                    continue;
                 }
 
-                let distance = pp as i8 + 1 - hand[NON_SIMPLES[n]];
+                let distance = pp as i8 + 1 - hand[*tid];
 
                 chmin(&mut table[n + 1][p + pp], get_next_value(current, distance));
             }
