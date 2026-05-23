@@ -33,10 +33,10 @@ pub enum ShantenError {
 /// # use shanten_dp::{ShantenError, calc_shanten, make_tile_limits};
 /// # fn main() -> Result<(), ShantenError> {
 /// let hand: [i8; 34] = [
-///    1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
-///    0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
-///    0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
-///    1, 0, 1, 0, 3, 0, 0, // jihai
+///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
+///     0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
+///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
 /// let shanten = calc_shanten(&hand, &tile_limits, 4, true)?;
