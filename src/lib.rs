@@ -1,9 +1,6 @@
 #![no_std]
 #![doc = include_str!("../README.md")]
 
-#[cfg(feature = "std")]
-extern crate std;
-
 mod common;
 
 #[doc(hidden)]
