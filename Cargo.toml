@@ -7,11 +7,11 @@ license = "MIT"
 repository = "https://github.com/tomohxx/shanten-dp-rust"
 readme = "README.md"
 keywords = ["mahjong", "shanten"]
-categories = ["algorithms", "game-development"]
+categories = ["algorithms", "game-development", "no-std"]
 rust-version = "1.85"
 
 [dependencies]
-thiserror = "2.0.18"
+thiserror = { version = "2.0.18", default-features = false }
 
 [[bench]]
 name = "shanten_dp_bench"
