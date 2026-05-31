@@ -3,12 +3,9 @@
 
 mod common;
 
-#[doc(hidden)]
-pub mod seven_pairs;
-#[doc(hidden)]
-pub mod standard;
-#[doc(hidden)]
-pub mod thirteen_orphans;
+mod seven_pairs;
+mod standard;
+mod thirteen_orphans;
 
 mod shanten;
 pub use shanten::ShantenError;

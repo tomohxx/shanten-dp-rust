@@ -12,6 +12,8 @@ pub enum ShantenError {
     /// The number of melds is outside the supported range.
     #[error("Invalid sum of hands's melds: {0}")]
     InvalidMelds(usize),
+    #[error("Invalid calculation mode: {0}")]
+    InvalidMode(u8),
 }
 
 /// Calculates the shanten number for a hand.
@@ -21,6 +23,7 @@ pub enum ShantenError {
 /// * `hand` - Tile counts for the hand.
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
+/// * `mode` - Bit flags for the hand types to calculate: 1 for standard, 2 for seven pairs, and 4 for thirteen orphans. Use bitwise OR to combine them.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
@@ -39,7 +42,7 @@ pub enum ShantenError {
 ///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
-/// let shanten = calc_shanten(&hand, &tile_limits, 4, true)?;
+/// let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true)?;
 ///
 /// assert!(matches!(shanten, Some(2)));
 /// # Ok(())
@@ -49,6 +52,7 @@ pub fn calc_shanten(
     hand: &[i8; 34],
     tile_limits: &[i8; 35],
     m: usize,
+    mode: u8,
     check_hand: bool,
 ) -> Result<Option<i8>, ShantenError> {
     if check_hand {
@@ -65,13 +69,26 @@ pub fn calc_shanten(
         if m > 4 {
             return Err(ShantenError::InvalidMelds(m));
         }
+
+        if mode == 0 || mode > 7 || (m != 4 && mode & 1 == 0) {
+            return Err(ShantenError::InvalidMode(mode));
+        }
     }
 
-    let mut ret = super::standard::calc_shanten(hand, tile_limits, m);
+    let mut ret = MAX_SHT as i8;
+
+    if mode & 1 != 0 {
+        ret = ret.min(super::standard::calc_shanten(hand, tile_limits, m));
+    }
 
     if m == 4 {
-        ret = ret.min(super::seven_pairs::calc_shanten(hand, tile_limits));
-        ret = ret.min(super::thirteen_orphans::calc_shanten(hand, tile_limits));
+        if mode & 2 != 0 {
+            ret = ret.min(super::seven_pairs::calc_shanten(hand, tile_limits));
+        }
+
+        if mode & 4 != 0 {
+            ret = ret.min(super::thirteen_orphans::calc_shanten(hand, tile_limits));
+        }
     }
 
     Ok(if ret == MAX_SHT as i8 - 1 { None } else { Some(ret) })
