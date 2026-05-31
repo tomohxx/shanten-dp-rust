@@ -6,7 +6,7 @@ use std::path::Path;
 use criterion::{Criterion, criterion_group, criterion_main};
 use shanten_dp::make_tile_limits;
 
-type Dataset = Vec<([i8; 34], i8, i8, i8)>;
+type Dataset = Vec<([u8; 34], i8, i8, i8)>;
 
 fn read(path: &Path) -> Dataset {
     let reader = BufReader::new(File::open(path).unwrap());
@@ -15,7 +15,7 @@ fn read(path: &Path) -> Dataset {
     for line in reader.lines() {
         let line = line.unwrap();
         let mut iter = line.split_ascii_whitespace();
-        let mut hand = [0i8; 34];
+        let mut hand = [0u8; 34];
 
         for _ in 0..14 {
             let tid = iter.next().unwrap().parse::<usize>().unwrap();

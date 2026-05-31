@@ -37,7 +37,7 @@ const Z6: usize = 32;
 const Z7: usize = 33;
 #[test]
 fn test_invalid_hand_error() {
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         5, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -51,13 +51,13 @@ fn test_invalid_hand_error() {
 
 #[test]
 fn test_invalid_tile_limits_error() {
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         1, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
         0, 0, 0, 0, 0, 0, 0, // jihai
     ];
-    let tile_limits = [0i8; 35];
+    let tile_limits = [0u8; 35];
     let err = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap_err();
 
     assert!(matches!(err, ShantenError::InvalidTileLimits(0, 0)));
@@ -65,7 +65,7 @@ fn test_invalid_tile_limits_error() {
 
 #[test]
 fn test_invalid_melds_error() {
-    let hand: [i8; 34] = [0; 34];
+    let hand: [u8; 34] = [0; 34];
     let tile_limits = make_tile_limits(false);
     let err = calc_shanten(&hand, &tile_limits, 5, 7, true).unwrap_err();
 
@@ -74,7 +74,7 @@ fn test_invalid_melds_error() {
 
 #[test]
 fn test_invalid_mode_error() {
-    let hand: [i8; 34] = [0; 34];
+    let hand: [u8; 34] = [0; 34];
     let tile_limits = make_tile_limits(false);
     let err = calc_shanten(&hand, &tile_limits, 4, 8, true).unwrap_err();
 
@@ -84,7 +84,7 @@ fn test_invalid_mode_error() {
 #[test]
 fn test_closed_hand() {
     // 123m245779p13555z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
         0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -99,13 +99,13 @@ fn test_closed_hand() {
 #[test]
 fn test_cannot_win() {
     // 123m245779p13555z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
         0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
         1, 0, 1, 0, 3, 0, 0, // jihai
     ];
-    let mut tile_limits = [0i8; 35];
+    let mut tile_limits = [0u8; 35];
 
     tile_limits[..hand.len()].copy_from_slice(&hand);
 
@@ -117,7 +117,7 @@ fn test_cannot_win() {
 #[test]
 fn test_insufficient_blocks_4433() {
     // 11112222333444z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -132,7 +132,7 @@ fn test_insufficient_blocks_4433() {
 #[test]
 fn test_insufficient_blocks_4442i() {
     // 11m111122223333z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         2, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -147,7 +147,7 @@ fn test_insufficient_blocks_4442i() {
 #[test]
 fn test_insufficient_blocks_4442ii() {
     // 23m111122223333z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -162,7 +162,7 @@ fn test_insufficient_blocks_4442ii() {
 #[test]
 fn test_insufficient_blocks_4333() {
     // 1111222333444z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -177,7 +177,7 @@ fn test_insufficient_blocks_4333() {
 #[test]
 fn test_insufficient_blocks_4432i() {
     // 11m11112222333z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         2, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -192,7 +192,7 @@ fn test_insufficient_blocks_4432i() {
 #[test]
 fn test_insufficient_blocks_4432ii() {
     // 23m11112222333z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -207,7 +207,7 @@ fn test_insufficient_blocks_4432ii() {
 #[test]
 fn test_insufficient_blocks_4441() {
     // 1111222233334z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -222,7 +222,7 @@ fn test_insufficient_blocks_4441() {
 #[test]
 fn test_open_hand_1() {
     // 13m123456p11s[[2222m]]
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         1, 0, 1, 0, 0, 0, 0, 0, 0, // manzu
         1, 1, 1, 1, 1, 1, 0, 0, 0, // pinzu
         2, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -240,7 +240,7 @@ fn test_open_hand_1() {
 #[test]
 fn test_open_hand_2() {
     // 9m9p569s[999m][999p][999s]
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 0, 0, 0, 0, 0, 0, 0, 1, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 1, // pinzu
         0, 0, 0, 0, 1, 1, 0, 0, 1, // souzu
@@ -260,7 +260,7 @@ fn test_open_hand_2() {
 #[test]
 fn test_open_hand_3() {
     // 11567z[777z][666z][555z]
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -280,7 +280,7 @@ fn test_open_hand_3() {
 #[test]
 fn test_open_hand_4() {
     // 13556z[111z][333z][666z]
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, // manzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu

@@ -62,7 +62,7 @@ const DELTAS: [&[Delta]; 34] = [
     &DELTAS_WITHOUT_SEQ, // 7z
 ];
 
-pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35], m: usize) -> i8 {
+pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35], m: usize) -> i8 {
     let mut table = [[[[[MAX_SHT; 5]; 2]; 5]; 5]; 35];
 
     table[0][0][0][0][0] = 0;

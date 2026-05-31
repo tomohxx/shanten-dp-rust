@@ -1,6 +1,6 @@
 use crate::common::*;
 
-pub fn calc_shanten(hand: &[i8; 34], tile_limits: &[i8; 35]) -> i8 {
+pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35]) -> i8 {
     let mut table = [[MAX_SHT; 8]; 35];
 
     table[0][0] = 0;

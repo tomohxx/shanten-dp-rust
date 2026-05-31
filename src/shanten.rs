@@ -5,10 +5,10 @@ use crate::common::{MAX_SHT, NUM_TIDS};
 pub enum ShantenError {
     /// The hand contains an invalid tile count.
     #[error("Invalid number of hand's tiles at {0}: {1}")]
-    InvalidHand(usize, i8),
+    InvalidHand(usize, u8),
     /// The tile availability constraints contain an invalid tile count.
     #[error("Invalid number of tile_limits' at {0}: {1}")]
-    InvalidTileLimits(usize, i8),
+    InvalidTileLimits(usize, u8),
     /// The number of melds is outside the supported range.
     #[error("Invalid sum of hands's melds: {0}")]
     InvalidMelds(usize),
@@ -35,7 +35,7 @@ pub enum ShantenError {
 /// ```
 /// # use shanten_dp::{ShantenError, calc_shanten, make_tile_limits};
 /// # fn main() -> Result<(), ShantenError> {
-/// let hand: [i8; 34] = [
+/// let hand: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
 ///     0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
 ///     0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
@@ -49,19 +49,19 @@ pub enum ShantenError {
 /// # }
 /// ```
 pub fn calc_shanten(
-    hand: &[i8; 34],
-    tile_limits: &[i8; 35],
+    hand: &[u8; 34],
+    tile_limits: &[u8; 35],
     m: usize,
     mode: u8,
     check_hand: bool,
 ) -> Result<Option<i8>, ShantenError> {
     if check_hand {
         for i in 0..NUM_TIDS {
-            if hand[i] < 0 || hand[i] > 4 {
+            if hand[i] > 4 {
                 return Err(ShantenError::InvalidHand(i, hand[i]));
             }
 
-            if tile_limits[i] < 0 || tile_limits[i] > 4 || hand[i] > tile_limits[i] {
+            if tile_limits[i] > 4 || hand[i] > tile_limits[i] {
                 return Err(ShantenError::InvalidTileLimits(i, tile_limits[i]));
             }
         }
@@ -101,8 +101,8 @@ pub fn calc_shanten(
 /// * `three_player` - If `false`, sets the available counts for all tiles to `4`.
 ///   If `true`, sets the available counts for *2m* through *8m* to `0` and all other
 ///   tiles to `4`.
-pub fn make_tile_limits(three_player: bool) -> [i8; 35] {
-    let mut tile_limits = [4i8; 35];
+pub fn make_tile_limits(three_player: bool) -> [u8; 35] {
+    let mut tile_limits = [4u8; 35];
 
     if three_player {
         tile_limits[1..8].fill(0);

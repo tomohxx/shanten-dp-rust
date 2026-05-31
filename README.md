@@ -28,7 +28,7 @@ use shanten_dp::{calc_shanten, make_tile_limits};
 
 fn main() {
     // 123m245779p13555z
-    let hand: [i8; 34] = [
+    let hand: [u8; 34] = [
         1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
         0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
         0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
