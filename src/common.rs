@@ -48,7 +48,6 @@ impl Calculatable for Data {
         if self.shanten > other.shanten {
             *self = other;
         } else if self.shanten == other.shanten {
-            self.shanten = other.shanten;
             self.discards |= other.discards;
             self.waits |= other.waits;
         }
