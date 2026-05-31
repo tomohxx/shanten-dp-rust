@@ -1,4 +1,4 @@
-use crate::common::{MAX_SHT, NUM_TIDS, Calculatable};
+use crate::common::{Calculatable, Data, MAX_SHT, NUM_TIDS};
 
 /// Errors returned by [`calc_shanten`].
 #[derive(Debug, thiserror::Error)]
@@ -42,13 +42,68 @@ pub enum ShantenError {
 ///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
-/// let shanten = calc_shanten::<i8>(&hand, &tile_limits, 4, 7, true)?;
+/// let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true)?;
 ///
 /// assert!(matches!(shanten, Some(2)));
 /// # Ok(())
 /// # }
 /// ```
-pub fn calc_shanten<T: Calculatable>(
+pub fn calc_shanten(
+    hand: &[u8; 34],
+    tile_limits: &[u8; 35],
+    m: usize,
+    mode: u8,
+    check_hand: bool,
+) -> Result<Option<i8>, ShantenError> {
+    calc_shanten_impl::<i8>(hand, tile_limits, m, mode, check_hand)
+}
+
+/// Calculates the shanten number for a hand, along with its necessary tiles / missing tiles and unnecessary tiles / redundant tiles.
+///
+/// # Arguments
+///
+/// * `hand` - Tile counts for the hand.
+/// * `tile_limits` - Per-tile availability constraints.
+/// * `m` - Number of hand tiles divided by 3.
+/// * `mode` - Bit flags for the hand types to calculate: 1 for standard, 2 for seven pairs, and 4 for thirteen orphans. Use bitwise OR to combine them.
+/// * `check_hand` - Validates the arguments when set to `true`.
+///
+/// # Errors
+///
+/// Returns [`Err`] if any argument is invalid.
+///
+/// # Examples
+///
+/// ```
+/// # use shanten_dp::{Data, ShantenError, calc_shanten2, make_tile_limits};
+/// # fn main() -> Result<(), ShantenError> {
+/// let hand: [u8; 34] = [
+///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
+///     0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
+///     1, 0, 1, 0, 3, 0, 0, // jihai
+/// ];
+/// let tile_limits = make_tile_limits(false);
+/// let Data { shanten, discards, waits } =
+///     calc_shanten2(&hand, &tile_limits, 4, 7, true)?.unwrap();
+///
+/// assert_eq!(shanten, 2);
+/// assert_eq!(discards, 0b0010101_000000000_101011010_000000000);
+/// assert_eq!(waits, 0b0000101_000000000_111111111_000000000);
+/// # Ok(())
+/// # }
+/// ```
+pub fn calc_shanten2(
+    hand: &[u8; 34],
+    tile_limits: &[u8; 35],
+    m: usize,
+    mode: u8,
+    check_hand: bool,
+) -> Result<Option<Data>, ShantenError> {
+    calc_shanten_impl::<Data>(hand, tile_limits, m, mode, check_hand)
+}
+
+pub fn calc_shanten_impl<T: Calculatable>(
     hand: &[u8; 34],
     tile_limits: &[u8; 35],
     m: usize,

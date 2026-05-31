@@ -35,7 +35,7 @@ fn main() {
         1, 0, 1, 0, 3, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten::<i8>(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
