@@ -1,9 +1,9 @@
 use crate::common::*;
 
-pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35]) -> i8 {
-    let mut table = [[MAX_SHT; 8]; 35];
+pub fn calc_shanten<T: Calculatable>(hand: &[u8; 34], tile_limits: &[u8; 35]) -> T {
+    let mut table = [[T::new(MAX_SHT); 8]; 35];
 
-    table[0][0] = 0;
+    table[0][0] = T::new(-1);
 
     for n in 0..NUM_TIDS {
         for pp in 0..(tile_limits[n] / 2 + 1).min(2) as usize {
@@ -14,12 +14,12 @@ pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35]) -> i8 {
                     continue;
                 }
 
-                let distance = (2 * pp).saturating_sub(hand[n] as usize) as u8;
+                let distance = 2 * pp as i8 - hand[n] as i8;
 
-                chmin(&mut table[n + 1][p + pp], current + distance);
+                table[n + 1][p + pp].chmin(current.get_next_value(distance, n));
             }
         }
     }
 
-    table[34][7] as i8 - 1
+    table[34][7]
 }

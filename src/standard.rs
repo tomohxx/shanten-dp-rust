@@ -62,10 +62,10 @@ const DELTAS: [&[Delta]; 34] = [
     &DELTAS_WITHOUT_SEQ, // 7z
 ];
 
-pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35], m: usize) -> i8 {
-    let mut table = [[[[[MAX_SHT; 5]; 2]; 5]; 5]; 35];
+pub fn calc_shanten<T: Calculatable>(hand: &[u8; 34], tile_limits: &[u8; 35], m: usize) -> T {
+    let mut table = [[[[[T::new(MAX_SHT); 5]; 2]; 5]; 5]; 35];
 
-    table[0][0][0][0][0] = 0;
+    table[0][0][0][0][0] = T::new(-1);
 
     for n in 0..NUM_TIDS {
         for delta in DELTAS[n] {
@@ -79,12 +79,10 @@ pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35], m: usize) -> i8 {
                                 continue;
                             }
 
-                            let distance = (a + delta.a).saturating_sub(hand[n] as usize) as u8;
+                            let distance = a as i8 + delta.a as i8 - hand[n] as i8;
 
-                            chmin(
-                                &mut table[n + 1][b + delta.b][delta.c][p + delta.p][mm + delta.m],
-                                current + distance,
-                            );
+                            table[n + 1][b + delta.b][delta.c][p + delta.p][mm + delta.m]
+                                .chmin(current.get_next_value(distance, n));
                         }
                     }
                 }
@@ -92,5 +90,5 @@ pub fn calc_shanten(hand: &[u8; 34], tile_limits: &[u8; 35], m: usize) -> i8 {
         }
     }
 
-    table[NUM_TIDS][0][0][1][m] as i8 - 1
+    table[NUM_TIDS][0][0][1][m]
 }

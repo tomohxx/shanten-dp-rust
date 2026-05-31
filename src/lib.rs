@@ -2,6 +2,8 @@
 #![doc = include_str!("../README.md")]
 
 mod common;
+pub use common::Data;
+pub use common::Calculatable;
 
 mod seven_pairs;
 mod standard;

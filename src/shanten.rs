@@ -1,4 +1,4 @@
-use crate::common::{MAX_SHT, NUM_TIDS};
+use crate::common::{MAX_SHT, NUM_TIDS, Calculatable};
 
 /// Errors returned by [`calc_shanten`].
 #[derive(Debug, thiserror::Error)]
@@ -42,19 +42,19 @@ pub enum ShantenError {
 ///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
-/// let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true)?;
+/// let shanten = calc_shanten::<i8>(&hand, &tile_limits, 4, 7, true)?;
 ///
 /// assert!(matches!(shanten, Some(2)));
 /// # Ok(())
 /// # }
 /// ```
-pub fn calc_shanten(
+pub fn calc_shanten<T: Calculatable>(
     hand: &[u8; 34],
     tile_limits: &[u8; 35],
     m: usize,
     mode: u8,
     check_hand: bool,
-) -> Result<Option<i8>, ShantenError> {
+) -> Result<Option<T>, ShantenError> {
     if check_hand {
         for i in 0..NUM_TIDS {
             if hand[i] > 4 {
@@ -75,23 +75,23 @@ pub fn calc_shanten(
         }
     }
 
-    let mut ret = MAX_SHT as i8;
+    let mut ret = T::new(MAX_SHT);
 
     if mode & 1 != 0 {
-        ret = ret.min(super::standard::calc_shanten(hand, tile_limits, m));
+        ret.chmin(super::standard::calc_shanten::<T>(hand, tile_limits, m));
     }
 
     if m == 4 {
         if mode & 2 != 0 {
-            ret = ret.min(super::seven_pairs::calc_shanten(hand, tile_limits));
+            ret.chmin(super::seven_pairs::calc_shanten::<T>(hand, tile_limits));
         }
 
         if mode & 4 != 0 {
-            ret = ret.min(super::thirteen_orphans::calc_shanten(hand, tile_limits));
+            ret.chmin(super::thirteen_orphans::calc_shanten::<T>(hand, tile_limits));
         }
     }
 
-    Ok(if ret == MAX_SHT as i8 - 1 { None } else { Some(ret) })
+    Ok(if ret == MAX_SHT { None } else { Some(ret) })
 }
 
 /// Creates tile availability constraints.
