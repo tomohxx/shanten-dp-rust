@@ -25,7 +25,7 @@ This project provides an efficient algorithm to calculate the minimum number of 
 ### Examples
 
 ```rust
-use shanten_dp::{calc_shanten, make_tile_limits};
+use shanten_dp::{calc_shanten, make_tile_limits, Mode};
 
 fn main() {
     // 123m245779p13555z
@@ -36,7 +36,7 @@ fn main() {
         1, 0, 1, 0, 3, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::ALL, true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }

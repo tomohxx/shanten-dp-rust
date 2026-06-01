@@ -1,4 +1,15 @@
 use crate::common::{Calculatable, Data, MAX_SHT, NUM_TIDS};
+use bitflags::bitflags;
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct Mode: u8{
+        const STANDARD = 0b001;
+        const SEVEN_PAIRS = 0b010;
+        const THIRTEEN_ORPHANS = 0b100;
+        const ALL = Self::STANDARD.bits() | Self::SEVEN_PAIRS.bits() | Self::THIRTEEN_ORPHANS.bits();
+    }
+}
 
 /// Errors returned by [`calc_shanten`].
 #[derive(Debug, thiserror::Error)]
@@ -12,8 +23,8 @@ pub enum ShantenError {
     /// The number of melds is outside the supported range.
     #[error("Invalid sum of hands's melds: {0}")]
     InvalidMelds(usize),
-    #[error("Invalid calculation mode: {0}")]
-    InvalidMode(u8),
+    #[error("Invalid calculation mode: {0:?}")]
+    InvalidMode(Mode),
 }
 
 /// Calculates the shanten number for a hand.
@@ -33,7 +44,7 @@ pub enum ShantenError {
 /// # Examples
 ///
 /// ```
-/// # use shanten_dp::{ShantenError, calc_shanten, make_tile_limits};
+/// # use shanten_dp::{ShantenError, calc_shanten, make_tile_limits, Mode};
 /// # fn main() -> Result<(), ShantenError> {
 /// let hand: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
@@ -42,7 +53,7 @@ pub enum ShantenError {
 ///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
-/// let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true)?;
+/// let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::ALL, true)?;
 ///
 /// assert!(matches!(shanten, Some(2)));
 /// # Ok(())
@@ -52,7 +63,7 @@ pub fn calc_shanten(
     hand: &[u8; 34],
     tile_limits: &[u8; 35],
     m: usize,
-    mode: u8,
+    mode: Mode,
     check_hand: bool,
 ) -> Result<Option<i8>, ShantenError> {
     calc_shanten_impl::<i8>(hand, tile_limits, m, mode, check_hand)
@@ -75,7 +86,7 @@ pub fn calc_shanten(
 /// # Examples
 ///
 /// ```
-/// # use shanten_dp::{Data, ShantenError, calc_shanten2, make_tile_limits};
+/// # use shanten_dp::{Data, ShantenError, calc_shanten2, make_tile_limits, Mode};
 /// # fn main() -> Result<(), ShantenError> {
 /// let hand: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
@@ -85,7 +96,7 @@ pub fn calc_shanten(
 /// ];
 /// let tile_limits = make_tile_limits(false);
 /// let Data { shanten, discards, waits } =
-///     calc_shanten2(&hand, &tile_limits, 4, 7, true)?.unwrap();
+///     calc_shanten2(&hand, &tile_limits, 4, Mode::ALL, true)?.unwrap();
 ///
 /// assert_eq!(shanten, 2);
 /// assert_eq!(discards, 0b0010101_000000000_101011010_000000000);
@@ -97,7 +108,7 @@ pub fn calc_shanten2(
     hand: &[u8; 34],
     tile_limits: &[u8; 35],
     m: usize,
-    mode: u8,
+    mode: Mode,
     check_hand: bool,
 ) -> Result<Option<Data>, ShantenError> {
     calc_shanten_impl::<Data>(hand, tile_limits, m, mode, check_hand)
@@ -107,7 +118,7 @@ pub fn calc_shanten_impl<T: Calculatable>(
     hand: &[u8; 34],
     tile_limits: &[u8; 35],
     m: usize,
-    mode: u8,
+    mode: Mode,
     check_hand: bool,
 ) -> Result<Option<T>, ShantenError> {
     if check_hand {
@@ -125,23 +136,23 @@ pub fn calc_shanten_impl<T: Calculatable>(
             return Err(ShantenError::InvalidMelds(m));
         }
 
-        if mode == 0 || mode > 7 || (m != 4 && mode & 1 == 0) {
+        if m != 4 && !mode.contains(Mode::STANDARD) {
             return Err(ShantenError::InvalidMode(mode));
         }
     }
 
     let mut ret = T::new(MAX_SHT);
 
-    if mode & 1 != 0 {
+    if mode.contains(Mode::STANDARD) {
         ret.chmin(super::standard::calc_shanten::<T>(hand, tile_limits, m));
     }
 
     if m == 4 {
-        if mode & 2 != 0 {
+        if mode.contains(Mode::SEVEN_PAIRS) {
             ret.chmin(super::seven_pairs::calc_shanten::<T>(hand, tile_limits));
         }
 
-        if mode & 4 != 0 {
+        if mode.contains(Mode::THIRTEEN_ORPHANS) {
             ret.chmin(super::thirteen_orphans::calc_shanten::<T>(hand, tile_limits));
         }
     }
