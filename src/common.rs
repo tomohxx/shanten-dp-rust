@@ -26,6 +26,7 @@ impl Calculatable for i8 {
     }
 }
 
+/// Calculation result for [`crate::calc_shanten2`].
 #[derive(Clone, Copy, Debug)]
 pub struct Data {
     pub shanten: i8,

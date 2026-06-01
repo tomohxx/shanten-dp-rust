@@ -2,6 +2,7 @@ use crate::common::{Calculatable, Data, MAX_SHT, NUM_TIDS};
 use bitflags::bitflags;
 
 bitflags! {
+    /// Calculation mode.
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Mode: u8{
         const STANDARD = 0b001;
