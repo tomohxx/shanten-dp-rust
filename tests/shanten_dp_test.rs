@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use shanten_dp::{ShantenError, calc_shanten, make_tile_limits};
+use shanten_dp::{Data, ShantenError, calc_shanten, calc_shanten2, make_tile_limits};
 
 const M1: usize = 0;
 const M2: usize = 1;
@@ -295,4 +295,22 @@ fn test_open_hand_4() {
     let shanten = calc_shanten(&hand, &tile_limits, 1, 7, true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
+}
+
+#[test]
+fn test_discards_and_waits() {
+    // 123m245779p13555z
+    let hand: [u8; 34] = [
+        1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
+        0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
+        0, 0, 0, 0, 0, 0, 0, 0, 0, // souzu
+        1, 0, 1, 0, 3, 0, 0, // jihai
+    ];
+    let tile_limits = make_tile_limits(false);
+    let Data { shanten, discards, waits } =
+        calc_shanten2(&hand, &tile_limits, 4, 7, true).unwrap().unwrap();
+
+    assert_eq!(shanten, 2);
+    assert_eq!(discards, 0b0010101_000000000_101011010_000000000);
+    assert_eq!(waits, 0b0000101_000000000_111111111_000000000);
 }
