@@ -26,7 +26,7 @@ impl Calculatable for i8 {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Data {
     pub shanten: i8,
     pub discards: u64,
