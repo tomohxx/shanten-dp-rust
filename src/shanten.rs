@@ -1,14 +1,13 @@
 use crate::common::{Calculatable, Data, MAX_SHT, NUM_TIDS};
-use bitflags::bitflags;
+use bitflags::{Flags, bitflags};
 
 bitflags! {
     /// Calculation mode.
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-    pub struct Mode: u8{
+    pub struct Mode: u8 {
         const STANDARD = 0b001;
         const SEVEN_PAIRS = 0b010;
         const THIRTEEN_ORPHANS = 0b100;
-        const ALL = Self::STANDARD.bits() | Self::SEVEN_PAIRS.bits() | Self::THIRTEEN_ORPHANS.bits();
     }
 }
 
@@ -54,7 +53,7 @@ pub enum ShantenError {
 ///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
-/// let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::ALL, true)?;
+/// let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true)?;
 ///
 /// assert!(matches!(shanten, Some(2)));
 /// # Ok(())
@@ -97,7 +96,7 @@ pub fn calc_shanten(
 /// ];
 /// let tile_limits = make_tile_limits(false);
 /// let Data { shanten, discards, waits } =
-///     calc_shanten2(&hand, &tile_limits, 4, Mode::ALL, true)?.unwrap();
+///     calc_shanten2(&hand, &tile_limits, 4, Mode::all(), true)?.unwrap();
 ///
 /// assert_eq!(shanten, 2);
 /// assert_eq!(discards, 0b0010101_000000000_101011010_000000000);
@@ -137,7 +136,7 @@ pub fn calc_shanten_impl<T: Calculatable>(
             return Err(ShantenError::InvalidMelds(m));
         }
 
-        if m != 4 && !mode.contains(Mode::STANDARD) {
+        if mode.is_empty() || mode.contains_unknown_bits() {
             return Err(ShantenError::InvalidMode(mode));
         }
     }
