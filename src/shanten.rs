@@ -167,11 +167,17 @@ pub fn calc_shanten_impl<T: Calculatable>(
 /// * `three_player` - If `false`, sets the available counts for all tiles to `4`.
 ///   If `true`, sets the available counts for *2m* through *8m* to `0` and all other
 ///   tiles to `4`.
-pub fn make_tile_limits(three_player: bool) -> [u8; 35] {
+pub const fn make_tile_limits(three_player: bool) -> [u8; 35] {
     let mut tile_limits = [4u8; 35];
 
     if three_player {
-        tile_limits[1..8].fill(0);
+        tile_limits[1] = 0; // 2m
+        tile_limits[2] = 0; // 3m
+        tile_limits[3] = 0; // 4m
+        tile_limits[4] = 0; // 5m
+        tile_limits[5] = 0; // 6m
+        tile_limits[6] = 0; // 7m
+        tile_limits[7] = 0; // 8m
     }
 
     tile_limits
