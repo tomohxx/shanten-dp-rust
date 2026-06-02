@@ -4,7 +4,7 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use shanten_dp::make_tile_limits;
+use shanten_dp::{Mode, calc_shanten, make_tile_limits};
 
 type Dataset = Vec<([u8; 34], i8, i8, i8)>;
 
@@ -37,17 +37,17 @@ fn verify(dataset: &Dataset) {
 
     for (hand, standard_shanten, seven_pairs_shanten, thirteen_orphans_shanten) in dataset {
         assert_eq!(
-            shanten_dp::calc_shanten(hand, &tile_limits, 4, 1, false).unwrap().unwrap(),
+            calc_shanten(hand, &tile_limits, 4, Mode::STANDARD, false).unwrap().unwrap(),
             *standard_shanten,
             "standard::calc_shanten validation failed"
         );
         assert_eq!(
-            shanten_dp::calc_shanten(hand, &tile_limits, 4, 2, false).unwrap().unwrap(),
+            calc_shanten(hand, &tile_limits, 4, Mode::SEVEN_PAIRS, false).unwrap().unwrap(),
             *seven_pairs_shanten,
             "seven_pairs::calc_shanten validation failed"
         );
         assert_eq!(
-            shanten_dp::calc_shanten(hand, &tile_limits, 4, 4, false).unwrap().unwrap(),
+            calc_shanten(hand, &tile_limits, 4, Mode::THIRTEEN_ORPHANS, false).unwrap().unwrap(),
             *thirteen_orphans_shanten,
             "thirteen_orphans::calc_shanten validation failed"
         );
@@ -83,9 +83,13 @@ fn bm_calc_shanten(c: &mut Criterion) {
         group.bench_with_input(*name, dataset, |b, dataset| {
             b.iter(|| {
                 for (hand, _, _, _) in dataset {
-                    black_box(shanten_dp::calc_shanten(hand, &tile_limits, 4, 1, false).unwrap());
-                    black_box(shanten_dp::calc_shanten(hand, &tile_limits, 4, 2, false).unwrap());
-                    black_box(shanten_dp::calc_shanten(hand, &tile_limits, 4, 4, false).unwrap());
+                    black_box(calc_shanten(hand, &tile_limits, 4, Mode::STANDARD, false).unwrap());
+                    black_box(
+                        calc_shanten(hand, &tile_limits, 4, Mode::SEVEN_PAIRS, false).unwrap(),
+                    );
+                    black_box(
+                        calc_shanten(hand, &tile_limits, 4, Mode::THIRTEEN_ORPHANS, false).unwrap(),
+                    );
                 }
             });
         });

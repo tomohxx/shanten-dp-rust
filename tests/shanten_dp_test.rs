@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use shanten_dp::{Data, ShantenError, calc_shanten, calc_shanten2, make_tile_limits};
+use shanten_dp::{Data, Mode, ShantenError, calc_shanten, calc_shanten2, make_tile_limits};
 
 const M1: usize = 0;
 const M2: usize = 1;
@@ -44,7 +44,7 @@ fn test_invalid_hand_error() {
         0, 0, 0, 0, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let err = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap_err();
+    let err = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap_err();
 
     assert!(matches!(err, ShantenError::InvalidHand(0, 5)));
 }
@@ -58,7 +58,7 @@ fn test_invalid_tile_limits_error() {
         0, 0, 0, 0, 0, 0, 0, // jihai
     ];
     let tile_limits = [0u8; 35];
-    let err = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap_err();
+    let err = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap_err();
 
     assert!(matches!(err, ShantenError::InvalidTileLimits(0, 0)));
 }
@@ -67,7 +67,7 @@ fn test_invalid_tile_limits_error() {
 fn test_invalid_melds_error() {
     let hand: [u8; 34] = [0; 34];
     let tile_limits = make_tile_limits(false);
-    let err = calc_shanten(&hand, &tile_limits, 5, 7, true).unwrap_err();
+    let err = calc_shanten(&hand, &tile_limits, 5, Mode::all(), true).unwrap_err();
 
     assert!(matches!(err, ShantenError::InvalidMelds(5)));
 }
@@ -76,9 +76,10 @@ fn test_invalid_melds_error() {
 fn test_invalid_mode_error() {
     let hand: [u8; 34] = [0; 34];
     let tile_limits = make_tile_limits(false);
-    let err = calc_shanten(&hand, &tile_limits, 4, 8, true).unwrap_err();
+    let invalid_mode = Mode::from_bits_retain(0b1000);
+    let err = calc_shanten(&hand, &tile_limits, 4, invalid_mode, true).unwrap_err();
 
-    assert!(matches!(err, ShantenError::InvalidMode(8)));
+    assert!(matches!(err, ShantenError::InvalidMode(mode) if mode == invalid_mode));
 }
 
 #[test]
@@ -91,7 +92,7 @@ fn test_closed_hand() {
         1, 0, 1, 0, 3, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -109,7 +110,7 @@ fn test_cannot_win() {
 
     tile_limits[..hand.len()].copy_from_slice(&hand);
 
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, None));
 }
@@ -124,7 +125,7 @@ fn test_insufficient_blocks_4433() {
         4, 4, 3, 3, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(1)));
 }
@@ -139,7 +140,7 @@ fn test_insufficient_blocks_4442i() {
         4, 4, 4, 0, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -154,7 +155,7 @@ fn test_insufficient_blocks_4442ii() {
         4, 4, 4, 0, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -169,7 +170,7 @@ fn test_insufficient_blocks_4333() {
         4, 3, 3, 3, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(1)));
 }
@@ -184,7 +185,7 @@ fn test_insufficient_blocks_4432i() {
         4, 4, 3, 0, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -199,7 +200,7 @@ fn test_insufficient_blocks_4432ii() {
         4, 4, 3, 0, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -214,7 +215,7 @@ fn test_insufficient_blocks_4441() {
         4, 4, 4, 1, 0, 0, 0, // jihai
     ];
     let tile_limits = make_tile_limits(false);
-    let shanten = calc_shanten(&hand, &tile_limits, 4, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(3)));
 }
@@ -232,7 +233,7 @@ fn test_open_hand_1() {
 
     tile_limits[M2] = 0;
 
-    let shanten = calc_shanten(&hand, &tile_limits, 3, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 3, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(1)));
 }
@@ -252,7 +253,7 @@ fn test_open_hand_2() {
     tile_limits[P9] = 1;
     tile_limits[S9] = 1;
 
-    let shanten = calc_shanten(&hand, &tile_limits, 1, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 1, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -272,7 +273,7 @@ fn test_open_hand_3() {
     tile_limits[Z6] = 1;
     tile_limits[Z5] = 1;
 
-    let shanten = calc_shanten(&hand, &tile_limits, 1, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 1, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -292,7 +293,7 @@ fn test_open_hand_4() {
     tile_limits[Z3] = 1;
     tile_limits[Z6] = 1;
 
-    let shanten = calc_shanten(&hand, &tile_limits, 1, 7, true).unwrap();
+    let shanten = calc_shanten(&hand, &tile_limits, 1, Mode::all(), true).unwrap();
 
     assert!(matches!(shanten, Some(2)));
 }
@@ -308,7 +309,7 @@ fn test_discards_and_waits() {
     ];
     let tile_limits = make_tile_limits(false);
     let Data { shanten, discards, waits } =
-        calc_shanten2(&hand, &tile_limits, 4, 7, true).unwrap().unwrap();
+        calc_shanten2(&hand, &tile_limits, 4, Mode::all(), true).unwrap().unwrap();
 
     assert_eq!(shanten, 2);
     assert_eq!(discards, 0b0010101_000000000_101011010_000000000);

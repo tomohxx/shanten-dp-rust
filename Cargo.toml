@@ -11,6 +11,7 @@ categories = ["algorithms", "game-development", "no-std"]
 rust-version = "1.85"
 
 [dependencies]
+bitflags = { version = "2.11.1", default-features = false }
 thiserror = { version = "2.0.18", default-features = false }
 
 [[bench]]

@@ -9,6 +9,7 @@ mod standard;
 mod thirteen_orphans;
 
 mod shanten;
+pub use shanten::Mode;
 pub use shanten::ShantenError;
 pub use shanten::calc_shanten;
 pub use shanten::calc_shanten2;
