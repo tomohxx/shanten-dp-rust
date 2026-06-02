@@ -34,7 +34,7 @@ pub enum ShantenError {
 /// * `hand` - Tile counts for the hand.
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
-/// * `mode` - Bit flags for the hand types to calculate: 1 for standard, 2 for seven pairs, and 4 for thirteen orphans. Use bitwise OR to combine them.
+/// * `mode` - Calculation mode ([`Mode`]). Combine flags with bitwise OR (e.g., `Mode::STANDARD | Mode::SEVEN_PAIRS`) or use `Mode::all()`.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
@@ -76,7 +76,7 @@ pub fn calc_shanten(
 /// * `hand` - Tile counts for the hand.
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
-/// * `mode` - Bit flags for the hand types to calculate: 1 for standard, 2 for seven pairs, and 4 for thirteen orphans. Use bitwise OR to combine them.
+/// * `mode` - Calculation mode ([`Mode`]). Combine flags with bitwise OR (e.g., `Mode::STANDARD | Mode::SEVEN_PAIRS`) or use `Mode::all()`.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
