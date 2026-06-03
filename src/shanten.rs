@@ -35,6 +35,7 @@ pub enum ShantenError {
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
 /// * `mode` - Calculation mode ([`Mode`]). Combine flags with bitwise OR (e.g., `Mode::STANDARD | Mode::SEVEN_PAIRS`) or use `Mode::all()`.
+/// * `four_tile_seven_pairs` - Allows seven pairs with four identical tiles.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
@@ -53,7 +54,7 @@ pub enum ShantenError {
 ///     1, 0, 1, 0, 3, 0, 0, // jihai
 /// ];
 /// let tile_limits = make_tile_limits(false);
-/// let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), true)?;
+/// let shanten = calc_shanten(&hand, &tile_limits, 4, Mode::all(), false, true)?;
 ///
 /// assert!(matches!(shanten, Some(2)));
 /// # Ok(())
@@ -64,9 +65,10 @@ pub fn calc_shanten(
     tile_limits: &[u8; 35],
     m: usize,
     mode: Mode,
+    four_tile_seven_pairs: bool,
     check_hand: bool,
 ) -> Result<Option<i8>, ShantenError> {
-    calc_shanten_impl::<i8>(hand, tile_limits, m, mode, check_hand)
+    calc_shanten_impl::<i8>(hand, tile_limits, m, mode, four_tile_seven_pairs, check_hand)
 }
 
 /// Calculates the shanten number for a hand, along with its necessary tiles / missing tiles and unnecessary tiles / redundant tiles.
@@ -77,6 +79,7 @@ pub fn calc_shanten(
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
 /// * `mode` - Calculation mode ([`Mode`]). Combine flags with bitwise OR (e.g., `Mode::STANDARD | Mode::SEVEN_PAIRS`) or use `Mode::all()`.
+/// * `four_tile_seven_pairs` - Allows seven pairs with four identical tiles.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
@@ -96,7 +99,7 @@ pub fn calc_shanten(
 /// ];
 /// let tile_limits = make_tile_limits(false);
 /// let Data { shanten, discards, waits } =
-///     calc_shanten2(&hand, &tile_limits, 4, Mode::all(), true)?.unwrap();
+///     calc_shanten2(&hand, &tile_limits, 4, Mode::all(), false, true)?.unwrap();
 ///
 /// assert_eq!(shanten, 2);
 /// assert_eq!(discards, 0b0010101_000000000_101011010_000000000);
@@ -109,9 +112,10 @@ pub fn calc_shanten2(
     tile_limits: &[u8; 35],
     m: usize,
     mode: Mode,
+    four_tile_seven_pairs: bool,
     check_hand: bool,
 ) -> Result<Option<Data>, ShantenError> {
-    calc_shanten_impl::<Data>(hand, tile_limits, m, mode, check_hand)
+    calc_shanten_impl::<Data>(hand, tile_limits, m, mode, four_tile_seven_pairs, check_hand)
 }
 
 pub fn calc_shanten_impl<T: Calculatable>(
@@ -119,6 +123,7 @@ pub fn calc_shanten_impl<T: Calculatable>(
     tile_limits: &[u8; 35],
     m: usize,
     mode: Mode,
+    four_tile_seven_pairs: bool,
     check_hand: bool,
 ) -> Result<Option<T>, ShantenError> {
     if check_hand {
@@ -149,7 +154,11 @@ pub fn calc_shanten_impl<T: Calculatable>(
 
     if m == 4 {
         if mode.contains(Mode::SEVEN_PAIRS) {
-            ret.chmin(super::seven_pairs::calc_shanten::<T>(hand, tile_limits));
+            if four_tile_seven_pairs {
+                ret.chmin(super::seven_pairs::calc_shanten::<T, true>(hand, tile_limits));
+            } else {
+                ret.chmin(super::seven_pairs::calc_shanten::<T, false>(hand, tile_limits));
+            }
         }
 
         if mode.contains(Mode::THIRTEEN_ORPHANS) {
