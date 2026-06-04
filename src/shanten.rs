@@ -35,7 +35,7 @@ pub enum ShantenError {
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
 /// * `mode` - Calculation mode ([`Mode`]). Combine flags with bitwise OR (e.g., `Mode::STANDARD | Mode::SEVEN_PAIRS`) or use `Mode::all()`.
-/// * `four_tile_seven_pairs` - Allows seven pairs with four identical tiles.
+/// * `four_tile_seven_pairs` - Allows seven pairs with four identical tiles when set to `true`.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
@@ -80,7 +80,7 @@ pub fn calc_shanten(
 /// * `tile_limits` - Per-tile availability constraints.
 /// * `m` - Number of hand tiles divided by 3.
 /// * `mode` - Calculation mode ([`Mode`]). Combine flags with bitwise OR (e.g., `Mode::STANDARD | Mode::SEVEN_PAIRS`) or use `Mode::all()`.
-/// * `four_tile_seven_pairs` - Allows seven pairs with four identical tiles.
+/// * `four_tile_seven_pairs` - Allows seven pairs with four identical tiles when set to `true`.
 /// * `check_hand` - Validates the arguments when set to `true`.
 ///
 /// # Errors
