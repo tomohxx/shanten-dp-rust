@@ -25,7 +25,7 @@ const DELTAS_WITHOUT_SEQ: [Delta; 3] = [
     Delta { a: 2, b: 0, c: 0, p: 1, m: 0 },
 ];
 
-const DELTAS: [&[Delta]; 34] = [
+const DELTAS: [&[Delta]; NUM_TIDS] = [
     &DELTAS_WITH_SEQ,    // 1m
     &DELTAS_WITH_SEQ,    // 2m
     &DELTAS_WITH_SEQ,    // 3m
@@ -62,8 +62,12 @@ const DELTAS: [&[Delta]; 34] = [
     &DELTAS_WITHOUT_SEQ, // 7z
 ];
 
-pub fn calc_shanten<T: Calculatable>(hand: &[u8; 34], tile_limits: &[u8; 35], m: usize) -> T {
-    let mut table = [[[[[T::new(MAX_SHT); 5]; 2]; 5]; 5]; 35];
+pub fn calc_shanten<T: Calculatable>(
+    hand: &[u8; NUM_TIDS],
+    tile_limits: &[u8; NUM_TIDS + 1],
+    m: usize,
+) -> T {
+    let mut table = [[[[[T::new(MAX_SHT); 5]; 2]; 5]; 5]; NUM_TIDS + 1];
 
     table[0][0][0][0][0] = T::new(-1);
 

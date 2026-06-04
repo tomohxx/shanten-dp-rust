@@ -2,7 +2,7 @@ use crate::common::*;
 
 const NON_SIMPLES: [usize; 13] = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
 
-pub fn calc_shanten<T: Calculatable>(hand: &[u8; 34], tile_limits: &[u8; 35]) -> T {
+pub fn calc_shanten<T: Calculatable>(hand: &[u8; NUM_TIDS], tile_limits: &[u8; NUM_TIDS + 1]) -> T {
     let mut table = [[T::new(MAX_SHT); 2]; 14];
 
     table[0][0] = T::new(-1);

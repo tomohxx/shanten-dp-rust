@@ -62,8 +62,8 @@ pub enum ShantenError {
 /// # }
 /// ```
 pub fn calc_shanten(
-    hand: &[u8; 34],
-    tile_limits: &[u8; 35],
+    hand: &[u8; NUM_TIDS],
+    tile_limits: &[u8; NUM_TIDS + 1],
     m: usize,
     mode: Mode,
     four_tile_seven_pairs: bool,
@@ -110,8 +110,8 @@ pub fn calc_shanten(
 /// # }
 /// ```
 pub fn calc_shanten2(
-    hand: &[u8; 34],
-    tile_limits: &[u8; 35],
+    hand: &[u8; NUM_TIDS],
+    tile_limits: &[u8; NUM_TIDS + 1],
     m: usize,
     mode: Mode,
     four_tile_seven_pairs: bool,
@@ -121,8 +121,8 @@ pub fn calc_shanten2(
 }
 
 pub fn calc_shanten_impl<T: Calculatable>(
-    hand: &[u8; 34],
-    tile_limits: &[u8; 35],
+    hand: &[u8; NUM_TIDS],
+    tile_limits: &[u8; NUM_TIDS + 1],
     m: usize,
     mode: Mode,
     four_tile_seven_pairs: bool,
@@ -178,8 +178,8 @@ pub fn calc_shanten_impl<T: Calculatable>(
 /// * `three_player` - If `false`, sets the available counts for all tiles to `4`.
 ///   If `true`, sets the available counts for *2m* through *8m* to `0` and all other
 ///   tiles to `4`.
-pub const fn make_tile_limits(three_player: bool) -> [u8; 35] {
-    let mut tile_limits = [4u8; 35];
+pub const fn make_tile_limits(three_player: bool) -> [u8; NUM_TIDS + 1] {
+    let mut tile_limits = [4u8; NUM_TIDS + 1];
 
     if three_player {
         tile_limits[1] = 0; // 2m

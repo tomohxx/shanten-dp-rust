@@ -1,10 +1,10 @@
 use crate::common::*;
 
 pub fn calc_shanten<T: Calculatable, const FOUR_TILE_SEVEN_PAIRS: bool>(
-    hand: &[u8; 34],
-    tile_limits: &[u8; 35],
+    hand: &[u8; NUM_TIDS],
+    tile_limits: &[u8; NUM_TIDS + 1],
 ) -> T {
-    let mut table = [[T::new(MAX_SHT); 8]; 35];
+    let mut table = [[T::new(MAX_SHT); 8]; NUM_TIDS + 1];
 
     table[0][0] = T::new(-1);
 
@@ -30,5 +30,5 @@ pub fn calc_shanten<T: Calculatable, const FOUR_TILE_SEVEN_PAIRS: bool>(
         }
     }
 
-    table[34][7]
+    table[NUM_TIDS][7]
 }
