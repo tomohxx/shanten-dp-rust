@@ -29,8 +29,11 @@ impl Calculatable for i8 {
 /// Calculation result for [`crate::calc_shanten2`].
 #[derive(Clone, Copy, Debug)]
 pub struct Data {
+    /// Shanten number
     pub shanten: i8,
+    /// Necessary tiles / Missing tiles
     pub discards: u64,
+    /// Unnecessary tiles / Redundant tiles
     pub waits: u64,
 }
 
