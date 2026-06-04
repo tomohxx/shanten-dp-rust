@@ -47,6 +47,7 @@ pub enum ShantenError {
 /// ```
 /// # use shanten_dp::{ShantenError, calc_shanten, make_tile_limits, Mode};
 /// # fn main() -> Result<(), ShantenError> {
+/// // 123m245779p13555z
 /// let hand: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
 ///     0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
@@ -91,6 +92,7 @@ pub fn calc_shanten(
 /// ```
 /// # use shanten_dp::{Data, ShantenError, calc_shanten2, make_tile_limits, Mode};
 /// # fn main() -> Result<(), ShantenError> {
+/// // 123m245779p13555z
 /// let hand: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // manzu
 ///     0, 1, 0, 1, 1, 0, 2, 0, 1, // pinzu
