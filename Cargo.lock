@@ -425,7 +425,7 @@ dependencies = [
 
 [[package]]
 name = "shanten-dp"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "criterion",
