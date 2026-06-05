@@ -31,9 +31,9 @@ impl Calculatable for i8 {
 pub struct Data {
     /// Shanten number
     pub shanten: i8,
-    /// Necessary tiles / Missing tiles
-    pub discards: u64,
     /// Unnecessary tiles / Redundant tiles
+    pub discards: u64,
+    /// Necessary tiles / Missing tiles
     pub waits: u64,
 }
 
