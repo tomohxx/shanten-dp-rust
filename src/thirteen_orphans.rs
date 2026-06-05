@@ -18,10 +18,10 @@ pub fn calc_shanten<T: Calculatable>(hand: &[u8; NUM_TIDS], tile_limits: &[u8; N
 
                 let distance = pp as i8 + 1 - hand[*tid] as i8;
 
-                table[n + 1][p + pp].chmin(current.get_next_value(distance, n));
+                table[n + 1][p + pp].chmin(current.get_next_value(distance, *tid));
             }
         }
     }
 
-    table[13][1]
+    table[NON_SIMPLES.len()][1]
 }
